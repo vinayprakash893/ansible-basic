@@ -1,0 +1,31 @@
+--- #Error handling
+- hosts: webservers
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: utility
+      command: /home/cloud_user/del/file.sh
+      async: 15
+      poll: 5 #making poll 0 will run the task in background and ansible thinks its sucess
+      delegate_to: 15.207.14.48 # this taks will execute only on this 
+      register: cmd_output
+    - debug:
+        # this task execurtes on all webservers 
+        msg:
+          - "{{ cmd_output }}"
+
+--- #run_once
+- hosts: webservers
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: utility
+      command: /home/cloud_user/del/file.sh
+      async: 15
+      poll: 5 #making poll 0 will run the task in background and ansible thinks its sucess
+      delegate_to: "15.207.14.48"
+      run_once: yes
+      register: cmd_output
+    - debug:
+        msg:
+          - "{{ cmd_output }}"

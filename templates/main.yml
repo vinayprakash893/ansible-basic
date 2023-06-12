@@ -1,0 +1,13 @@
+--- #templates
+- hosts: localhost
+  gather_facts: no
+  become: yes
+  become_method: sudo
+  vars:
+    code_name: vny
+    version: 1.2
+  tasks:
+    - name: deploy_config
+      template:
+        src: file.j2
+        dest: /opt/vny

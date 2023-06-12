@@ -1,0 +1,11 @@
+{
+    "yaml.schemas": {
+        "https://raw.githubusercontent.com/ansible/ansible-lint/main/src/ansiblelint/schemas/ansible.json#/$defs/playbook": [
+            "file:///d%3A/git/ansible-basic/condition/main.yml",
+            "file:///d%3A/git/ansible-basic/handlers/main.yml",
+            "file:///d%3A/git/ansible-basic/handlers/install_httpd.yml",
+            "file:///d%3A/git/ansible-basic/vars/localhost.yml",
+            "file:///d%3A/git/ansible-basic/project2-/webserver.yml"
+        ]
+    }
+}

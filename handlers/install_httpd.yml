@@ -1,0 +1,46 @@
+---
+- name: Install HTTPD or apache2 web server
+  hosts: localhost
+  become: yes
+  become_method: sudo
+  vars:
+    httpd_port: 9080
+  tasks:
+  - debug:
+      msg:
+        - "The node is {{inventory_hostname}} and distribution is {{ansible_distribution}}"
+
+  - name: Installing HTTPD using yum
+    yum:
+      name: httpd
+      state: latest
+    notify:
+      - Start HTTPD
+
+  - name: Configuring Default HTML page
+    template:
+      src: index.html.j2
+      dest: /usr/share/httpd/noindex/index.html
+    notify: 
+      - Reload HTTPD
+
+  - name: Configuring HTTPD port to "{{httpd_port}}"
+    template:
+      src: httpd.conf.j2
+      dest: /etc/httpd/conf/httpd.conf
+      validate: /usr/sbin/httpd -t -f %s
+    notify: 
+      - Reload HTTPD
+        
+  handlers:
+    - name: Start HTTPD
+      service:
+          name: httpd
+          state: started
+      listen: Start HTTPD
+
+    - name: Reload HTTPD
+      service:
+          name: httpd
+          state: reloaded
+      listen: Reload HTTPD

@@ -1,0 +1,13 @@
+- hosts: localhost
+  tasks:
+    - name: create-directory
+      file:
+        name: "{{ work_dir }}"
+        state: directory
+    - name : save-env
+      command: ls -la "{{ work_dir }}"
+      register: cmd_env
+    - name: print_env
+      lineinfile:
+        path: "{{ cmd_env }}/file.txt"
+        line: "wrote"

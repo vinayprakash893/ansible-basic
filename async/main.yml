@@ -1,0 +1,13 @@
+--- #Error handling
+- hosts: localhost
+  become: yes
+  become_method: sudo
+  tasks:
+    - name: utility
+      command: /home/cloud_user/async/file.sh
+      async: 15
+      poll: 5 #making poll 0 will run the task in background and ansible thinks its sucess
+      register: cmd_output
+    - debug:
+        msg:
+          - "{{ cmd_output }}"

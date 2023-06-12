@@ -1,0 +1,23 @@
+- hosts: localhost
+  become: yes
+  become_method: sudo
+  vars:
+    httpd_log_level: error
+  tasks:
+    - name: install_httpd
+      yum:
+        name: httpd
+        state: latest
+    - name: update_config
+      template:
+        src: file.j2
+        dest: "/etc/https/config/httpd.conf"
+      notify: httpd_service
+  handlers:
+    - name: httpd_service
+      service:
+        name: httpd
+        state: restarted
+      listen: httpd_service
+
+  

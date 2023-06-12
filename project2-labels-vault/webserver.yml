@@ -1,0 +1,45 @@
+--- # project2
+- hosts: webservers
+  become: yes
+  vars_files:
+    - "/home/ansible/confidential"
+  tasks: 
+    - name: httpd
+      tags:
+        - base-install
+      yum:
+        name: httpd
+        state: latest
+      notify: httpd service
+
+    - name: vhost
+      template:
+        src: /home/ansible/vhost.conf.j2
+        dest: /etc/httpd/conf.d/vhost.conf
+      notify: httpd service
+      tags:
+        - vhost
+    - name: htpass
+      template:
+        src: /home/ansible/htpasswd.j2
+        dest: /etc/httpd/conf/htpasswd
+      notify: httpd service
+      tags:
+        - vhost
+    
+    - name: run data job
+      command: /opt/data-job.sh
+      async: 600
+      poll: 0
+      tags:
+        - data-job
+
+    
+
+  handlers:
+    - name: restart httpd
+      service:
+        name: httpd
+        state: started
+        enabled: yes
+      listen: httpd service

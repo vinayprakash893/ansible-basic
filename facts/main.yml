@@ -1,0 +1,11 @@
+- name: Collect Facts
+  hosts: localhost
+  gather_facts: true
+  tasks:
+    - name: Display Host Facts
+      debug:
+        var: ansible_facts
+    - name: Create file
+      copy:
+        content: "{{ ansible_facts }}"
+        dest: "/home/cloud_user/fact/file.txt"

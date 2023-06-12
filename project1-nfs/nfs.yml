@@ -1,0 +1,57 @@
+---
+- hosts: nfs
+  become: yes
+  vars:
+    share_path: /mnt/nfsroot
+  tasks:
+    - name: install nfs
+      yum:
+        name: nfs-utils
+        state: latest
+    - name: start and enable nfs-server
+      service:
+        name: nfs-server
+        state: started
+        enabled: yes
+    - name: configure exports
+      template:
+        src: /home/cloud_user/code/exports.j2
+        dest: /etc/exports
+      notify: update nfs
+  handlers:
+    - name: update nfs exports
+      command: exportfs -a
+      listen: update nfs
+
+- hosts: remote
+  become: yes
+  gather_facts: true
+  vars:
+    nfs_ip: "{{ hostvars['nfs']['ansible_default_ipv4']['address'] }}"
+    nfs_hostname: "{{ hostvars['nfs']['ansible_hostname'] }}"
+  vars_files:
+    - user-list.txt
+  tasks:
+    - name: configure etchosts
+      template:
+        src: /home/cloud_user/code/etc.hosts.j2
+        dest: /etc/hosts
+    - name: vars_nfsip
+      debug:
+        var: nfs_ip
+    - name: vars_hostname
+      debug:
+        var: nfs_hostname
+    - name: get file status
+      stat:
+        path: /opt/user-agreement.txt
+      register: file_exist
+    - name: debug info
+      debug:
+        var: file_exist
+    - name: create user
+      user:
+        name: "{{ item }}"
+        state: present
+      loop: "{{ users }}"
+      when: file_exist.stat.exists

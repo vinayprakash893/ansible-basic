@@ -1,0 +1,15 @@
+- hosts: localhost
+  vars_files:
+    /home/cloud_user/vault/passfile
+  tasks:
+    - name: show pass
+      lineinfile:
+        path: /home/cloud_user/vault/open.txt
+        create : yes
+        line: "{{ password }}"
+      no_log: true
+
+# echo "password: vinay" > passfile
+# ansible-vault encrypt --vault-id dev@prompt passfile
+# ap main.yml --vault-id dev@prompt
+

@@ -1,0 +1,24 @@
+- hosts: localhost
+  gather_facts: false
+  vars:
+    file_path: "/home/cloud_user/cond/nfd/file.txt"
+    folder_path: "/home/cloud_user/cond/nfd"
+  tasks:
+    - name: Check if folder exists
+      stat:
+        path: "{{ folder_path }}"
+      register: folder_stat
+    - name: Create folder if it doesn't exist
+      file:
+        path: "{{ folder_path }}"
+        state: directory
+      when: not folder_stat.stat.exists
+    - name: Check if folder exists
+      stat:
+        path: "{{ folder_path }}"
+      register: fold_created
+    - name: Create file
+      copy:
+        content: "This is a sample file."
+        dest: "{{ file_path }}"
+      when: fold_created.stat.exists

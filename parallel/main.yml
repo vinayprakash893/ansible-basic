@@ -1,0 +1,15 @@
+- hosts: webservers
+  become: yes
+  become_method: sudo
+  serial: 
+    - 1
+    - 2
+    - 4
+  tasks:
+    - name: install
+      package:
+        name: httpd
+        state: latest
+    - debug:
+        msg:
+          "done"
